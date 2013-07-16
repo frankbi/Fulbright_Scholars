@@ -1,4 +1,5 @@
 import requests
+import re
 from bs4 import BeautifulSoup
 
 url = 'http://us.fulbrightonline.org/component/filter'
@@ -13,6 +14,10 @@ r = requests.post(url, data=payload)
 
 soup = BeautifulSoup(r.text)
 # content = soup.findAll('td', attrs={'style': 'color:  #565758'})
-content = soup.findAll('td')
+
+content = soup.findAll('p', style=re.compile("font-size: 24px;"))
 for rows in content:
-	print rows
+	if rows.string.strip() != "Search Results":
+		names = rows.string.strip()
+		print names
+
