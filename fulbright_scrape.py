@@ -11,7 +11,7 @@ payload = {'view': 'searchresult', \
 	'sort': 'default', \
 	'seq': 'default', \
 	'year[]': '', \
-	'start': '0'}
+	'start': '27300'}
 
 r = requests.post(url, data=payload)
 
@@ -34,8 +34,8 @@ for rows in content:
 			start += 1
 			end += 1
 		fulbright_info.append(scholar)
-c = csv.writer(open('Fulbright_Scholars.csv', 'wb'), quoting = csv.QUOTE_ALL)
-c.writerow(['Grantee','Institution','State','Field','County','Year'])
+# c = csv.writer(open('Fulbright_Scholars.csv', 'wb'), quoting = csv.QUOTE_ALL)
+# c.writerow(['Grantee','Institution','State','Field','County','Year'])
 
 for i in range(0, 20):
 	name = fulbright_info[i][0]
@@ -44,4 +44,5 @@ for i in range(0, 20):
 	field = fulbright_info[i][3]
 	country = fulbright_info[i][4]
 	year = fulbright_info[i][5]
-	c.writerow([name,school,state,field,country,year])
+	print name + " " + school + " " + state + " " + field + " " + country + " " + year
+	# c.writerow([name,school,state,field,country,year])
