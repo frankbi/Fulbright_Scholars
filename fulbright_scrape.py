@@ -1,6 +1,7 @@
+from bs4 import BeautifulSoup
 import requests
 import re
-from bs4 import BeautifulSoup
+import csv
 
 # TODO
 # Loop through the different starts
@@ -33,4 +34,14 @@ for rows in content:
 			start += 1
 			end += 1
 		fulbright_info.append(scholar)
-print fulbright_info
+c = csv.writer(open('Fulbright_Scholars.csv', 'wb'), quoting = csv.QUOTE_ALL)
+c.writerow(['Grantee','Institution','State','Field','County','Year'])
+
+for i in range(0, 20):
+	name = fulbright_info[i][0]
+	school = fulbright_info[i][1]
+	state = fulbright_info[i][2]
+	field = fulbright_info[i][3]
+	country = fulbright_info[i][4]
+	year = fulbright_info[i][5]
+	c.writerow([name,school,state,field,country,year])
