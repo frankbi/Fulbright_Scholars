@@ -9,7 +9,7 @@ payload = {'view': 'searchresult', \
 	'format': 'raw', \
 	'sort': 'default', \
 	'seq': 'default', \
-	'year[]': '1991', \
+	'year[]': '', \
 	'start': '0'}
 
 r = requests.post(url, data=payload)
@@ -18,17 +18,19 @@ soup = BeautifulSoup(r.text)
 
 fulbright_info = []
 content = soup.findAll('p', style=re.compile('font-size: 24px;'))
+start = 0
+end = 5
 for rows in content:
-	if rows.string.strip() != "Search Results":
-		names = rows.string.strip()
-		names = re.sub(r'\s+', ' ', names)	
-		a = []
-		a.append(names)
-
-		crat = soup.findAll('td', style=re.compile('color: #565758'))
-		for z in crat:
-			asdf = z.string.strip()
-			a.append(asdf)		
-		# Append the remaining information to a before push to 2D
-		fulbright_info.append(a)
-print fulbright_info[0]
+	if rows.string.strip() != 'Search Results':
+		name = rows.string.strip()
+		name = re.sub(r'\s+', ' ', name)	
+		scholar = []
+		scholar.append(name)
+		scholar_details = soup.findAll('td', style=re.compile('color: #565758'))
+		for person in scholar_details[start:end]:
+			scholar_info = person.string.strip()
+			scholar.append(scholar_info)
+			start += 1
+			end += 1
+		fulbright_info.append(scholar)
+print fulbright_info
