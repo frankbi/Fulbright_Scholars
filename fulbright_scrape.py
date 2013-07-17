@@ -22,8 +22,7 @@ content = soup.findAll('p', style=re.compile("font-size: 24px;"))
 for rows in content:
 	if rows.string.strip() != "Search Results":
 		names = rows.string.strip()
-		# TODO
-		# Need to cut down on whitespace between first and last names		
+		names = re.sub(r'\s+', ' ', names)	
 		a = []
 		a.append(names)
 			# TODO
