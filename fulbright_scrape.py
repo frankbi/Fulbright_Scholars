@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 import re
 import csv
+import codecs
 
 # Global variables
 fulbright_info = []
@@ -11,19 +12,18 @@ c.writerow(['Grantee','Institution','State','Field','County','Year'])
 
 def getData(start):
 	url = 'http://us.fulbrightonline.org/component/filter'
-	payload = {'view': 'searchresult', \
+	payload = { 'view': 'searchresult', \
 		'format': 'raw', \
 		'sort': 'default', \
 		'seq': 'default', \
 		'year[]': '', \
-		'start': start}
-		# 27300
+		'start': start }
 
 	r = requests.post(url, data=payload)
 	soup = BeautifulSoup(r.text)
 	return soup
 
-def passData(soup):
+def passData(soup, starter):
 	content = soup.findAll('p', style=re.compile('font-size: 24px;'))
 	numItems = len(content)
 	numItems = numItems - 1
@@ -31,19 +31,19 @@ def passData(soup):
 	end = 5
 	for rows in content:
 		if rows.string.strip() != 'Search Results':
-			name = rows.string.strip()
+			name = rows.string.encode('utf-8').strip()
 			name = re.sub(r'\s+', ' ', name)	
 			scholar = []
 			scholar.append(name)
 			scholar_details = soup.findAll('td', style=re.compile('color: #565758'))
 			for person in scholar_details[start:end]:
-				scholar_info = person.string.strip()
+				scholar_info = person.string.encode('utf-8').strip()
 				scholar.append(scholar_info)
 				start += 1
 				end += 1
 			fulbright_info.append(scholar)
 
-	for i in range(0, numItems):
+	for i in range(starter, starter + numItems):
 		name = fulbright_info[i][0]
 		school = fulbright_info[i][1]
 		state = fulbright_info[i][2]
@@ -52,11 +52,6 @@ def passData(soup):
 		year = fulbright_info[i][5]
 		c.writerow([name,school,state,field,country,year])
 
-"""
-for x in xrange(0, 200, 20):
+for x in xrange(0, 27301, 20):
 	soup = getData(x)
-	passData(soup)
-"""
-
-soup = getData(80)
-passData(soup)
+	passData(soup, x)
