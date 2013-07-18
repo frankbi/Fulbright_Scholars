@@ -3,22 +3,30 @@ import requests
 import re
 import csv
 
-# TODO
-# Loop through the different starts
-url = 'http://us.fulbrightonline.org/component/filter'
-payload = {'view': 'searchresult', \
-	'format': 'raw', \
-	'sort': 'default', \
-	'seq': 'default', \
-	'year[]': '', \
-	'start': '27300'}
-
-r = requests.post(url, data=payload)
-
-soup = BeautifulSoup(r.text)
-
+# Global variables
 fulbright_info = []
+
+c = csv.writer(open('Fulbright_Scholars.csv', 'wb'), quoting = csv.QUOTE_ALL)
+c.writerow(['Grantee','Institution','State','Field','County','Year'])
+
+def getData(start):
+	url = 'http://us.fulbrightonline.org/component/filter'
+	payload = {'view': 'searchresult', \
+		'format': 'raw', \
+		'sort': 'default', \
+		'seq': 'default', \
+		'year[]': '', \
+		'start': start}
+		# 27300
+
+	r = requests.post(url, data=payload)
+	soup = BeautifulSoup(r.text)
+	return soup
+
+soup = getData(0)
+
 content = soup.findAll('p', style=re.compile('font-size: 24px;'))
+print len(content)
 start = 0
 end = 5
 for rows in content:
@@ -34,8 +42,6 @@ for rows in content:
 			start += 1
 			end += 1
 		fulbright_info.append(scholar)
-# c = csv.writer(open('Fulbright_Scholars.csv', 'wb'), quoting = csv.QUOTE_ALL)
-# c.writerow(['Grantee','Institution','State','Field','County','Year'])
 
 for i in range(0, 20):
 	name = fulbright_info[i][0]
@@ -44,5 +50,5 @@ for i in range(0, 20):
 	field = fulbright_info[i][3]
 	country = fulbright_info[i][4]
 	year = fulbright_info[i][5]
-	print name + " " + school + " " + state + " " + field + " " + country + " " + year
-	# c.writerow([name,school,state,field,country,year])
+	# print name + " " + school + " " + state + " " + field + " " + country + " " + year
+	c.writerow([name,school,state,field,country,year])
